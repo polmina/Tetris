@@ -1,0 +1,4 @@
+he aconseguit imprimir la primera figura en pantalla
+al metode printPieceOnMap
+
+pero la posicio x i y estan canviades, mira al console del navegaor per recordarho be
