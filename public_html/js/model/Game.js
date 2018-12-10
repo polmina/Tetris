@@ -14,14 +14,32 @@ Game.prototype.initializeGame = function () {
     Game.prototype.setNextPiece.call(this);
 
 };
+Game.prototype.rotateLeft = function () {
+    this.currentPiece.rotateLeft();
+    this.printPieceOnMap();
+};
+Game.prototype.rotateRight = function () {
+    this.currentPiece.rotateRight();
+    this.printPieceOnMap();
+};
+Game.prototype.moveLeft = function () {
+    this.currentPiece.moveLeft();
+    this.printPieceOnMap();
+};
+Game.prototype.moveRight = function () {
+    this.currentPiece.moveRight();
+    this.printPieceOnMap();
+};
+Game.prototype.moveDown = function () {
+    this.currentPiece.moveDown();
+    this.printPieceOnMap();
+};
 Game.prototype.printPieceOnMap = function () {
     var piece = this.currentPiece;
-    var pieceX = piece.x;
-    var pieceY = piece.y;
     for (var i = 0; i < 4; i++) {
         for (var u = 0; u < 4; u++) {
             if (piece.shapes[piece.currentShape][i][u] === 1) {
-                 this.map[pieceY+i][pieceX+u]=1;
+                 this.map[piece.y+i][piece.x+u]=1;
             }
         }
     }

@@ -18,7 +18,7 @@ Piece.prototype.moveLeft = function(){
 Piece.prototype.moveDown = function(){
     this.y++;
 };
-Piece.prototype.turnLeft = function(){
+Piece.prototype.rotateLeft = function(){
     if((this.currentShape-1)<0){
         this.currentShape=this.shapes.length-1;
     }
@@ -26,7 +26,7 @@ Piece.prototype.turnLeft = function(){
         this.currentShape--;
     }
 };
-Piece.prototype.turnRight = function(){
+Piece.prototype.rotateRight = function(){
     if((this.currentShape+1)===this.shapes.length){
         this.currentShape=0;
     }
