@@ -1,4 +1,7 @@
-he aconseguit imprimir la primera figura en pantalla
-al metode printPieceOnMap
+he aconseguit que les peces baixin, pero tal i com
+ mho he montat nomes es jga amb les 7 peces ue hi ha inicialitzades
+nNO EM CAL GUARDAR LES PECES DEL JOC SIMPLEMENT QUE QUAN UNA NO ES FA SERVIR ES PERDI LA SVA INFORMACIO SHA DE CANVAIAR FOR
+ÇA COSA DEL CODI 
 
-pero la posicio x i y estan canviades, mira al console del navegaor per recordarho be
+la solucio podria ser fer no guardar res, com que tinc la inicialitzacio de cada peça per separat
+que el metode random sigui un switch i que inicialitzi currentPiece o nextPiece amb la peça tal qual

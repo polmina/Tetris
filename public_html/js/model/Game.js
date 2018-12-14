@@ -3,16 +3,13 @@ var Game = function () {
     this.map;
     this.playerScore = 0;
     this.playerMaxScore = 0;
-    this.pieces;
     this.currentPiece;
     this.nextPiece;
 };
 Game.prototype.initializeGame = function () {
     Game.prototype.initializeMap.call(this);
-    Game.prototype.initializePieces.call(this);
     Game.prototype.setCurrentPiece.call(this);
     Game.prototype.setNextPiece.call(this);
-
 };
 Game.prototype.rotateLeft = function () {
     this.currentPiece.rotateLeft();
@@ -31,15 +28,82 @@ Game.prototype.moveRight = function () {
     this.printPieceOnMap();
 };
 Game.prototype.moveDown = function () {
-    this.currentPiece.moveDown();
-    this.printPieceOnMap();
+    if (this.checkNextMove("DOWN") === true) {
+        this.deleteLastKnownPosition();
+        this.currentPiece.moveDown();
+        this.printPieceOnMap();
+        //console.log(this.currentPiece.id + " , " + this.nextPiece.id);
+
+    } else { //hi ha colisio detectada
+
+        //alert("aaa");
+        this.currentPiece = this.nextPiece;
+        Game.prototype.setNextPiece.call(this);
+        //console.log(this.currentPiece.id);
+    }
+};
+Game.prototype.checkNextMove = function (direction) {
+    var piece = this.currentPiece;
+
+    switch (direction) {
+        case "DOWN":
+            for (var i = 3; i > -1; i--) {
+                for (var u = 0; u < 4; u++) {
+                    //console.log("y: " + (i)    + " x: " + (u) + " == " + (piece.shapes[piece.currentShape][i][u]));
+                    if (this.currentPiece.id !== 1) {
+                        if (piece.shapes[piece.currentShape][i][u] !== 0 && piece.shapes[piece.currentShape][i + 1][u] === 0) {
+                            //console.log("y: " + (piece.y + i) + " x: " + (piece.x + u) + " == " + (piece.shapes[piece.currentShape][i][u]));
+                            try {
+                                if (this.map[(piece.y + i) + 1][(piece.x + u)] !== 0) {
+                                    return false;
+                                }
+                            } catch (e) {
+                                return false;
+                            }
+
+
+                        }
+                    } else {
+
+                        if (piece.shapes[piece.currentShape][i][u] !== 0) {
+                            console.log("y: " + (piece.y + i) + " x: " + (piece.x + u) + " == " + (piece.shapes[piece.currentShape][i][u]));
+
+                            try {
+                                if (this.map[(piece.y + i) + 1][(piece.x + u)] === 0) {
+                                    return true;
+                                }else {return false;}
+                            } catch (e) {
+                                return false;
+                            }
+
+
+                        }
+                    }
+                }
+            }
+            return true;
+            break;
+    }
+};
+Game.prototype.deleteLastKnownPosition = function () {
+    var piece = this.currentPiece;
+    for (var i = 0; i < 4; i++) {
+        for (var u = 0; u < 4; u++) {
+
+            if (piece.shapes[piece.currentShape][i][u] === 1) {
+                //console.log("y: " + (piece.y + i)    + " x: " + (piece.x + u) + " == " + (piece.shapes[piece.currentShape][i][u]));
+                this.map[piece.y + i][piece.x + u] = 0;
+            }
+        }
+    }
 };
 Game.prototype.printPieceOnMap = function () {
     var piece = this.currentPiece;
     for (var i = 0; i < 4; i++) {
         for (var u = 0; u < 4; u++) {
             if (piece.shapes[piece.currentShape][i][u] === 1) {
-                 this.map[piece.y+i][piece.x+u]=1;
+                //console.log("y: " + (piece.y + i) + " x: " + (piece.x + u) + " == " + (piece.shapes[piece.currentShape][i][u]));
+                this.map[piece.y + i][piece.x + u] = 1;
             }
         }
     }
@@ -48,27 +112,39 @@ Game.prototype.setCurrentPiece = function () {
     this.currentPiece = Game.prototype.getRandomPiece.call(this);
 };
 Game.prototype.setNextPiece = function () {
-    this.currentPiece = Game.prototype.getRandomPiece.call(this);
+    this.nextPiece = Game.prototype.getRandomPiece.call(this);
 };
-Game.prototype.initializePieces = function () {
-    this.pieces = [
-        this.createLine(),
-        this.createSquare(),
-        this.createLShape(),
-        this.createJShape(),
-        this.createTee(),
-        this.createZShape(),
-        this.createSShape()
-    ];
 
-};
 Game.prototype.setMapCell = function (x, y) {
-        this.map[x][y]=1;
+    this.map[x][y] = 1;
 };
 Game.prototype.getRandomPiece = function () {
-    return this.pieces[Math.floor(Math.random() * 7)];
+    var n = Math.floor(Math.random() * 7);
+    switch (n) {
+        case 0:
+            return this.createLine();
+            break;
+        case 1:
+            return this.createSquare();
+            break;
+        case 2:
+            return this.createLShape();
+            break;
+        case 3:
+            return this.createJShape();
+            break;
+        case 4:
+            return this.createTee();
+            break;
+        case 5:
+            return this.createZShape();
+            break;
+        case 6:
+            return this.createSShape();
+            break;
+    }
+//    return this.createLine();
 };
-
 Game.prototype.initializeMap = function () {
     this.map = new Array(25);
     for (var i = 0; i < 25; i++) {
@@ -160,9 +236,9 @@ Game.prototype.createLShape = function () {
         ],
         [
             [0, 0, 0, 0],
-            [0, 0, 0, 0],
             [1, 1, 1, 0],
-            [0, 0, 1, 0]
+            [1, 0, 0, 0],
+            [0, 0, 0, 0]
         ]
     ];
     return new Piece(3, COLORS.green, shapes);
@@ -170,10 +246,10 @@ Game.prototype.createLShape = function () {
 Game.prototype.createJShape = function () {
     var shapes = [
         [
+            [0, 1, 1, 0],
             [0, 1, 0, 0],
             [0, 1, 0, 0],
-            [0, 1, 0, 0],
-            [0, 1, 0, 0]
+            [0, 0, 0, 0]
         ],
         [
             [0, 0, 0, 0],
