@@ -40,4 +40,7 @@ Piece.prototype.increaseCounter = function(){
 Piece.prototype.getCurrentShape = function(){
     return this.shapes[this.currentShape];
 };
+Piece.prototype.setId = function(id){
+    return this.id = id;
+};
 

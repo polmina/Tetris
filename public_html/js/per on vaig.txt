@@ -1,7 +1,6 @@
-he aconseguit que les peces baixin, pero tal i com
- mho he montat nomes es jga amb les 7 peces ue hi ha inicialitzades
-nNO EM CAL GUARDAR LES PECES DEL JOC SIMPLEMENT QUE QUAN UNA NO ES FA SERVIR ES PERDI LA SVA INFORMACIO SHA DE CANVAIAR FOR
-ÇA COSA DEL CODI 
+ja vaig pel punt 4!
 
-la solucio podria ser fer no guardar res, com que tinc la inicialitzacio de cada peça per separat
-que el metode random sigui un switch i que inicialitzi currentPiece o nextPiece amb la peça tal qual
+estic intentant fer ja les rotacions,
+per comprovar si es pot girar o no comprovo els punts de la forma actual i seguent i miro en quins punts no coincideixen,
+
+despres agafo aquests punts i miro en el mapa si esta lliure, si ho estan tots giro
