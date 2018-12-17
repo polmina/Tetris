@@ -2,7 +2,7 @@ var game = new Game();
 game.initializeGame();
 game.printPieceOnMap();
 game.printMap();
-
+game.checkForFullRows();
 nextMove();
 
 
@@ -11,12 +11,17 @@ nextMove();
 
 
 function nextMove(){
-    //console.clear();
+    console.clear();
     //game.initializeMap();
+    game.checkForFullRows();
     game.moveDown();
     game.printMap();
-    
-    setTimeout(nextMove, 200);
+    if(game.getLost()===false){
+        setTimeout(nextMove, 200);
+        
+    }else{
+        alert("HAS PERDUT");
+    }
 }
 document.onkeypress = function(evt) {
     evt = evt || window.event;

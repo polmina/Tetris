@@ -5,6 +5,7 @@ var Game = function () {
     this.playerMaxScore = 0;
     this.currentPiece;
     this.nextPiece;
+    this.lost = false;
 };
 Game.prototype.initializeGame = function () {
     Game.prototype.initializeMap.call(this);
@@ -43,15 +44,17 @@ Game.prototype.moveRight = function () {
     ;
 };
 Game.prototype.moveDown = function () {
+
     if (this.checkNextMove("DOWN") === true) {
         this.deleteLastKnownPosition();
         this.currentPiece.moveDown();
         this.printPieceOnMap();
 
     } else { //hi ha colisio detectada
-        this.currentPiece = this.nextPiece;
-        Game.prototype.setNextPiece.call(this);
+        this.insertNextPiece();
+
     }
+    //this.checkForFullRows();
 };
 Game.prototype.setMaxDown = function () {
     while (this.checkNextMove("DOWN") === true) {
@@ -59,12 +62,25 @@ Game.prototype.setMaxDown = function () {
         this.currentPiece.moveDown();
         this.printPieceOnMap();
 
-    } 
-    this.currentPiece = this.nextPiece;
-    Game.prototype.setNextPiece.call(this);
-    this.puntuacio++;
-    };
- 
+    }
+    this.insertNextPiece();
+};
+
+Game.prototype.insertNextPiece = function () {
+    var piece = this.nextPiece;
+    for (var Y = 0; Y < 4; Y++) {
+        for (var X = 0; X < 4; X++) {
+            if(piece.shapes[piece.currentShape][Y][X] !== 0 && this.map[Y][(piece.x + X)] !== 0){
+                this.lost = true;
+            }else{
+                this.currentPiece = this.nextPiece;
+                Game.prototype.setNextPiece.call(this);
+                this.puntuacio++;
+            }
+        }
+    }
+    
+};
 Game.prototype.checkNextMove = function (direction) {
     switch (direction) {
         case "DOWN":
@@ -83,50 +99,88 @@ Game.prototype.checkNextMove = function (direction) {
             return this.checkRotateRight(this.currentPiece);
             break;
     }
+
+};
+Game.prototype.checkForFullRows = function () {
+    var count = 0;
+    for (var Y = this.map.length - 1; Y > -1; Y--) {
+        for (var X = 0; X < this.map[0].length; X++) {
+            if (this.map[Y][X] === 0) {
+                break;
+            }
+            count++;
+        }
+
+        if (count === 10) {
+            this.deleteOneRow(Y);
+        }
+        count = 0;
+    }
+};
+Game.prototype.deleteOneRow = function (Y) {
+    for (var X = 0; X < this.map[0].length; X++) {
+        this.map[Y][X] = 0;
+    }
+    this.lowerOneRow();
+
+};
+Game.prototype.lowerOneRow = function (Y) {
+    for (var Y = this.map.length - 1; Y > -1; Y--) {
+        for (var X = 0; X < this.map[0].length; X++) {
+            if (this.map[Y][X] === 1) {
+                this.map[Y][X] = 0;
+                this.map[Y + 1][X] = 1;
+            }
+        }
+
+
+    }
 };
 Game.prototype.checkRotateLeft = function (piece) {
     var nextPieceShape = this.generatePiece(piece.id);
     nextPieceShape.rotateLeft();
-    for(var Y = 0; Y < 4; Y++){
-        for(var X = 0; X < 4; X++){
-            try{
-               if(nextPieceShape.shapes[nextPieceShape.currentShape][Y][X] !== 0 && piece.shapes[piece.currentShape][Y][X] === 0){
-                    
+    for (var Y = 0; Y < 4; Y++) {
+        for (var X = 0; X < 4; X++) {
+            try {
+                if (nextPieceShape.shapes[nextPieceShape.currentShape][Y][X] !== 0 && piece.shapes[piece.currentShape][Y][X] === 0) {
+
                     if (this.map[(piece.y + Y)][(piece.x + X)] !== 0) {
-                            return false;
+                        return false;
                     }
                 }
-            }catch(e){
+            } catch (e) {
                 return false;
             }
         }
-    }return true;
+    }
+    return true;
 };
 Game.prototype.checkRotateRight = function (piece) {
     var nextPieceShape = this.generatePiece(piece.id);
     nextPieceShape.rotateRight();
-    for(var Y = 0; Y < 4; Y++){
-        for(var X = 0; X < 4; X++){
-            try{
-               if(nextPieceShape.shapes[nextPieceShape.currentShape][Y][X] !== 0 && piece.shapes[piece.currentShape][Y][X] === 0){
-                    
+    for (var Y = 0; Y < 4; Y++) {
+        for (var X = 0; X < 4; X++) {
+            try {
+                if (nextPieceShape.shapes[nextPieceShape.currentShape][Y][X] !== 0 && piece.shapes[piece.currentShape][Y][X] === 0) {
+
                     if (this.map[(piece.y + Y)][(piece.x + X)] !== 0) {
-                            return false;
+                        return false;
                     }
                 }
-            }catch(e){
+            } catch (e) {
                 return false;
             }
         }
-    }return true;
+    }
+    return true;
 };
 Game.prototype.checkMoveLeft = function (piece) {
     for (var X = 0; X < 4; X++) {
         for (var Y = 3; Y > -1; Y--) {
             if (piece.shapes[piece.currentShape][Y][X] !== 0) {
-                if (X === 0 || piece.shapes[piece.currentShape][Y][X - 1] === 0 ) {
+                if (X === 0 || piece.shapes[piece.currentShape][Y][X - 1] === 0) {
                     if (this.map[(piece.y + Y)][(piece.x + X) - 1] !== 0) {
-                            return false;
+                        return false;
                     }
                 }
             }
@@ -138,13 +192,13 @@ Game.prototype.checkMoveRight = function (piece) {
     for (var X = 3; X > -1; X--) {
         for (var Y = 3; Y > -1; Y--) {
             if (piece.shapes[piece.currentShape][Y][X] !== 0) {
-                if (X + 1 === 4 || piece.shapes[piece.currentShape][Y][X + 1] === 0 ) {
+                if (X + 1 === 4 || piece.shapes[piece.currentShape][Y][X + 1] === 0) {
                     if (this.map[(piece.y + Y)][(piece.x + X) + 1] !== 0) {
-                            return false;
-                        }
+                        return false;
+                    }
                 }
             }
-            
+
         }
     }
     return true;
@@ -154,8 +208,8 @@ Game.prototype.checkMoveDown = function (piece) {
         for (var X = 0; X < 4; X++) {
             if (piece.shapes[piece.currentShape][Y][X] !== 0) {
                 try {
-                   
-                    if (Y+1 === 4 || piece.shapes[piece.currentShape][Y + 1][X] === 0 ) {
+
+                    if (Y + 1 === 4 || piece.shapes[piece.currentShape][Y + 1][X] === 0) {
                         if (this.map[(piece.y + Y) + 1][(piece.x + X)] !== 0) {
                             return false;
                         }
@@ -184,9 +238,10 @@ Game.prototype.printPieceOnMap = function () {
     for (var i = 0; i < 4; i++) {
         for (var u = 0; u < 4; u++) {
             if (piece.shapes[piece.currentShape][i][u] === 1) {
-                try{//console.log("y: " + (piece.y + i) + " x: " + (piece.x + u) + " == " + (piece.shapes[piece.currentShape][i][u]));
+                try {//console.log("y: " + (piece.y + i) + " x: " + (piece.x + u) + " == " + (piece.shapes[piece.currentShape][i][u]));
                     this.map[piece.y + i][piece.x + u] = 1;
-                 }catch(e){}
+                } catch (e) {
+                }
             }
         }
     }
@@ -446,4 +501,7 @@ Game.prototype.createSShape = function () {
         ]
     ];
     return new Piece(6, COLORS.yellow, shapes);
+};
+Game.prototype.getLost = function(){
+    return this.lost;
 };
