@@ -1,6 +1,1 @@
-ja vaig pel punt 4!
-
-estic intentant fer ja les rotacions,
-per comprovar si es pot girar o no comprovo els punts de la forma actual i seguent i miro en quins punts no coincideixen,
-
-despres agafo aquests punts i miro en el mapa si esta lliure, si ho estan tots giro
+estc gent ja la aprt visual ho faig amb taula

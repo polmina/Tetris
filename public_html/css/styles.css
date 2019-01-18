@@ -1,3 +1,49 @@
+html{
+    width: 90%;
+    height: 90%;
+}
 body{
-    background-color : black;
+    width: 90%;
+    height: 90%;
+ background-color: black;
+}
+table{
+    border: 1px black solid;
+    width: 20%;
+    height: 110%;
+    margin-left: 50%;
+    margin-top: 3%;
+    background-color: white;
+    border-spacing: 0px;
+}
+table td{
+    border: 1px slategrey solid;
+    background-color: white;
+    margin: 0px;
+    padding: 0px;
+}
+.newGameButton{
+    background-color: white;
+    cursor: pointer;
+    width: 180px;
+    position:relative;
+    margin-left: 6%;
+    margin-top: 10%;
+    text-align: center;
+    font-size: 24px;
+}
+.newGameButton:hover{
+    background-color: lightgrey;
+}
+.a{
+    margin-top: -50%;
+    margin-left: 10%;
+}
+
+.score{
+    color: yellow;
+}
+#instructions{
+    margin-top: -50%;
+    margin-left: 80%;
 }

@@ -1,8 +1,6 @@
-var COLORS = {red: '#FF0000', blue: '#0000FF', green: '#31B404', purple: '#B40486', yellow: '#FFFF00', orange: '#FF4000', cyan: '#01DFA5'};
 var Game = function () {
     this.map;
     this.playerScore = 0;
-    this.playerMaxScore = 0;
     this.currentPiece;
     this.nextPiece;
     this.lost = false;
@@ -52,7 +50,6 @@ Game.prototype.moveDown = function () {
 
     } else { //hi ha colisio detectada
         this.insertNextPiece();
-
     }
     //this.checkForFullRows();
 };
@@ -63,7 +60,9 @@ Game.prototype.setMaxDown = function () {
         this.printPieceOnMap();
 
     }
+    this.playerScore+=100;
     this.insertNextPiece();
+    
 };
 
 Game.prototype.insertNextPiece = function () {
@@ -75,7 +74,7 @@ Game.prototype.insertNextPiece = function () {
             }else{
                 this.currentPiece = this.nextPiece;
                 Game.prototype.setNextPiece.call(this);
-                this.puntuacio++;
+                this.playerScore+=100;
             }
         }
     }
@@ -124,12 +123,14 @@ Game.prototype.deleteOneRow = function (Y) {
     this.lowerOneRow();
 
 };
-Game.prototype.lowerOneRow = function (Y) {
+Game.prototype.lowerOneRow = function () {
     for (var Y = this.map.length - 1; Y > -1; Y--) {
         for (var X = 0; X < this.map[0].length; X++) {
-            if (this.map[Y][X] === 1) {
+            if (this.map[Y][X] !== 0) {
+                try{
+                this.map[Y + 1][X] = this.map[Y][X];
                 this.map[Y][X] = 0;
-                this.map[Y + 1][X] = 1;
+            }catch(e){}
             }
         }
 
@@ -137,7 +138,7 @@ Game.prototype.lowerOneRow = function (Y) {
     }
 };
 Game.prototype.checkRotateLeft = function (piece) {
-    var nextPieceShape = this.generatePiece(piece.id);
+    var nextPieceShape = this.generatePiece(piece.id-1);
     nextPieceShape.rotateLeft();
     for (var Y = 0; Y < 4; Y++) {
         for (var X = 0; X < 4; X++) {
@@ -156,7 +157,7 @@ Game.prototype.checkRotateLeft = function (piece) {
     return true;
 };
 Game.prototype.checkRotateRight = function (piece) {
-    var nextPieceShape = this.generatePiece(piece.id);
+    var nextPieceShape = this.generatePiece(piece.id-1);
     nextPieceShape.rotateRight();
     for (var Y = 0; Y < 4; Y++) {
         for (var X = 0; X < 4; X++) {
@@ -227,7 +228,7 @@ Game.prototype.deleteLastKnownPosition = function () {
     for (var i = 0; i < 4; i++) {
         for (var u = 0; u < 4; u++) {
 
-            if (piece.shapes[piece.currentShape][i][u] === 1) {
+            if (piece.shapes[piece.currentShape][i][u] !== 0) {
                 this.map[piece.y + i][piece.x + u] = 0;
             }
         }
@@ -237,9 +238,9 @@ Game.prototype.printPieceOnMap = function () {
     var piece = this.currentPiece;
     for (var i = 0; i < 4; i++) {
         for (var u = 0; u < 4; u++) {
-            if (piece.shapes[piece.currentShape][i][u] === 1) {
+            if (piece.shapes[piece.currentShape][i][u] !== 0) {
                 try {//console.log("y: " + (piece.y + i) + " x: " + (piece.x + u) + " == " + (piece.shapes[piece.currentShape][i][u]));
-                    this.map[piece.y + i][piece.x + u] = 1;
+                    this.map[piece.y + i][piece.x + u] = piece.id;
                 } catch (e) {
                 }
             }
@@ -253,9 +254,7 @@ Game.prototype.setNextPiece = function () {
     this.nextPiece = Game.prototype.getRandomPiece.call(this);
 };
 
-Game.prototype.setMapCell = function (x, y) {
-    this.map[x][y] = 1;
-};
+
 Game.prototype.getRandomPiece = function () {
     var n = Math.floor(Math.random() * 7);
     //var n = 0;
@@ -306,8 +305,8 @@ Game.prototype.printMap = function () {
                 case 0:
                     string += '.';
                     break;
-                case 1:
-                    string += 'H';
+                default:
+                    string += this.map[i][j];
                     break;
             }
             string += " ";
@@ -343,7 +342,7 @@ Game.prototype.createLine = function () {
             [0, 0, 0, 0]
         ]
     ];
-    return new Piece(0, COLORS.red, shapes);
+    return new Piece(1, shapes);
 };
 Game.prototype.createSquare = function () {
     var shapes = [
@@ -355,7 +354,7 @@ Game.prototype.createSquare = function () {
         ]
 
     ];
-    return new Piece(1, COLORS.blue, shapes);
+    return new Piece(2, shapes);
 };
 Game.prototype.createLShape = function () {
     var shapes = [
@@ -384,7 +383,7 @@ Game.prototype.createLShape = function () {
             [0, 0, 0, 0]
         ]
     ];
-    return new Piece(2, COLORS.green, shapes);
+    return new Piece(3, shapes);
 };
 Game.prototype.createJShape = function () {
     var shapes = [
@@ -413,7 +412,7 @@ Game.prototype.createJShape = function () {
             [0, 0, 0, 0]
         ]
     ];
-    return new Piece(3, COLORS.orange, shapes);
+    return new Piece(4, shapes);
 };
 Game.prototype.createTee = function () {
     var shapes = [
@@ -442,7 +441,7 @@ Game.prototype.createTee = function () {
             [0, 0, 0, 0]
         ]
     ];
-    return new Piece(4, COLORS.purple, shapes);
+    return new Piece(5, shapes);
 };
 Game.prototype.createZShape = function () {
     var shapes = [
@@ -471,7 +470,7 @@ Game.prototype.createZShape = function () {
             [0, 0, 0, 0]
         ]
     ];
-    return new Piece(5, COLORS.cyan, shapes);
+    return new Piece(6, shapes);
 };
 Game.prototype.createSShape = function () {
     var shapes = [
@@ -500,7 +499,7 @@ Game.prototype.createSShape = function () {
             [0, 0, 0, 0]
         ]
     ];
-    return new Piece(6, COLORS.yellow, shapes);
+    return new Piece(7, shapes);
 };
 Game.prototype.getLost = function(){
     return this.lost;

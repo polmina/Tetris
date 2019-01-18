@@ -1,6 +1,5 @@
-var Piece = function (id, colour, shapes) {
+var Piece = function (id,  shapes) {
     this.id = id;
-    this.colour = colour;
     this.shapes = shapes;
     this.currentShape = 0;
     this.counter = 0;
